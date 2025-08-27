@@ -1,9 +1,14 @@
 package com.onlinevoting.controller;
 
 import com.onlinevoting.model.UserDetail;
-import com.onlinevoting.repository.UserDetailRepository;
+import com.onlinevoting.service.UserDetailService;
+
+import jakarta.validation.Valid;
+
+import com.onlinevoting.dto.ApiResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,18 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserDetailsController {
 
     @Autowired
-    private UserDetailRepository userDetailRepository;
-
-    @GetMapping("/v1/data")
-    public String getData(){
-        return "sss";
-    }
+    private UserDetailService userDetailService;
 
     @PostMapping("/v1/user_detail")
-    public void createUser(@RequestBody UserDetail userDetail) {
-        UserDetail userDetail1 = new UserDetail(userDetail.getFirstName(),userDetail.getLastName(),
-                userDetail.getMiddleName(),userDetail.getEmailId(),userDetail.getPhoneNo(),userDetail.getAddress(),
-                userDetail.getDob(),userDetail.getAadharNumber());
-        userDetailRepository.save(userDetail1);
+    public ResponseEntity<ApiResponse<UserDetail>> createUser(@Valid @RequestBody UserDetail userDetail) {
+        UserDetail savedUser = userDetailService.saveUser(userDetail);
+        ApiResponse<UserDetail> response = new ApiResponse<>(true, savedUser, null);
+        return ResponseEntity.ok(response);
     }
 }
