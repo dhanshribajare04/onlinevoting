@@ -117,13 +117,13 @@ public class LoginService {
 
         UserDetail userDetail = userDetailRepository.findByEmailId(userLoginInfoDto.getUserId());
         if (userDetail == null) {
-            throw new UserNotFoundException("User not found with email: " + userLoginInfoDto.getUserId());
+            throw new UserNotFoundException(String.format(Constants.USER_NOT_FOUND_WITH_EMAILID, userLoginInfoDto.getUserId()));
         }
         
         Optional<UserOtpDetails> userOtpDetails = userOtpDetailsRepository.findByUserDetailIdAndIsOtpUsedFalseAndIsActiveTrue(userDetail.getId());
       
         if (userOtpDetails == null || !userOtpDetails.isPresent()) {
-            throw new IllegalArgumentException("No valid OTP found for user: " + userLoginInfoDto.getUserId());
+            throw new IllegalArgumentException(String.format(Constants.INVALID_OTP, userLoginInfoDto.getUserId()));
         }
         
         if (userOtpDetails.get().getOtp().toString().equals(userLoginInfoDto.getOtp()) && !isOtpExpired(userOtpDetails.get().getExpiryTime())) {
@@ -133,6 +133,6 @@ public class LoginService {
             logger.info("User logged in successfully: " + userLoginInfoDto.getUserId());
             return true;
         }
-        throw new IllegalArgumentException("Invalid OTP for user: " + userLoginInfoDto.getUserId());
+        throw new IllegalArgumentException(String.format(Constants.INVALID_OTP, userLoginInfoDto.getUserId()));
     }
 }

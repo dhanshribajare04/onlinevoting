@@ -1,5 +1,6 @@
 package com.onlinevoting.service;
 
+import com.onlinevoting.constants.Constants;
 import com.onlinevoting.constants.EmailConstants;
 import com.onlinevoting.model.UserDetail;
 import com.onlinevoting.repository.UserDetailRepository;
@@ -25,7 +26,7 @@ public class UserDetailService {
 
           UserDetail existingUserDetail = userDetailRepository.findByEmailId(emailId);
           if (existingUserDetail != null) {
-               throw new IllegalArgumentException("User with account for email " + emailId + " already exists.");
+               throw new IllegalArgumentException(String.format(Constants.USER_ALREADY_EXIST, emailId));
           }
 
           UserDetail newUserDetail = new UserDetail(userDetail.getFirstName(), userDetail.getLastName(),
@@ -56,7 +57,7 @@ public class UserDetailService {
           Optional<UserDetail> existingUserDetail = userDetailRepository.findById(id);
           
           if (existingUserDetail.isEmpty()) {
-               throw new IllegalArgumentException("User with account for ID " + id + " does not exist.");
+               throw new IllegalArgumentException(String.format(Constants.USER_DOES_NOT_EXIST, id));
           }
 
           UserDetail user = existingUserDetail.get();
@@ -78,7 +79,7 @@ public class UserDetailService {
           Optional<UserDetail> existingUserDetail = userDetailRepository.findByIdAndIsActiveTrue(id);
           
           if (existingUserDetail.isEmpty()) {
-               throw new IllegalArgumentException("User with account for ID " + id + " does not exist.");
+               throw new IllegalArgumentException(String.format(Constants.USER_DOES_NOT_EXIST, id));
           }
 
           UserDetail userDetail = existingUserDetail.get();
